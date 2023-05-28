@@ -1,28 +1,24 @@
 import React from 'react';
-import { useState } from 'react';
+import  { UseState }  from './useState/usetState';
+import { UseContext } from './useContext/useContext'
 
 import './App.css';
 
+const initContext = {
+  data: [ 1, 2, 3, 4, 5 ]
+}
+
+export const MyContext = React.createContext();
+
 const App = () => {
-
-  let [ colorTheme, setStateColor ]  = useState('Gray')
-  let [ size, setSize ]  = useState( 14 )
-
-  let color = colorTheme === 'black' ? 'white' : 'black' 
   return (
-    <div style={ {
-      padding: 10,
-      backgroundColor: colorTheme,
-      fontSize: size,
-      color: color,
-    } } >
-      Hellow World
-      <button onClick={ () => setStateColor('black') }> Dark </button>
-      <button onClick={ () => setStateColor('gray') }> Gray </button>
-      <button onClick={ () => setSize( prev => prev + 2 ) }> + </button>
-      <button onClick={ () => setSize( prev => prev - 2 ) }> - </button>
-    </div>
-  );
+    <MyContext.Provider value={ initContext.data }>
+      <div>
+        <UseState />
+        <UseContext />
+      </div>
+    </MyContext.Provider>
+  )
 }
 
 export default App;
