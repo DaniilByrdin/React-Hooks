@@ -1,23 +1,26 @@
-import logo from './logo.svg';
+import React from 'react';
+import { useState } from 'react';
+
 import './App.css';
 
-function App() {
+const App = () => {
+
+  let [ colorTheme, setStateColor ]  = useState('Gray')
+  let [ size, setSize ]  = useState( 14 )
+
+  let color = colorTheme === 'black' ? 'white' : 'black' 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={ {
+      padding: 10,
+      backgroundColor: colorTheme,
+      fontSize: size,
+      color: color,
+    } } >
+      Hellow World
+      <button onClick={ () => setStateColor('black') }> Dark </button>
+      <button onClick={ () => setStateColor('gray') }> Gray </button>
+      <button onClick={ () => setSize( prev => prev + 2 ) }> + </button>
+      <button onClick={ () => setSize( prev => prev - 2 ) }> - </button>
     </div>
   );
 }
