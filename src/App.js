@@ -1,6 +1,7 @@
 import React from 'react';
 import  { UseState }  from './useState/usetState';
 import { UseContext } from './useContext/useContext'
+import { UseEffect } from './useEffect/useEffect'
 
 import './App.css';
 
@@ -16,6 +17,7 @@ const App = () => {
       <div>
         <UseState />
         <UseContext />
+        <UseEffect />
       </div>
     </MyContext.Provider>
   )
