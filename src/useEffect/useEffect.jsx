@@ -1,65 +1,111 @@
 import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
-
+import { useEffect, useState, useCallback, useMemo } from "react";
 
 
 export const UseEffect = () => {
-    let [ BtnLabel, setBtnLabel] = useState(true)
-    let [ int , setInt ] = useState( 1 ) 
+    let [BtnLabel, setBtnLabel] = useState(true)
+    let [int, setInt] = useState(1)
 
-    let [ planet, setPlanet ] = useState()
-    let [ disBtn, setDisBtn ] = useState( false )
+    const getPlanet = (id) => {
+        return fetch(`https://swapi.dev/api/planets/${id}`)
+        .then(res => res.json())
+        .then(res =>  res )
+    }
 
-    useEffect( () => {
+    const useRequest = ( request ) => {
 
-        setDisBtn( v => !v )
+        const initState = useMemo ( () => ({ 
+            data: null,
+            loading: true,
+            error: null,
+        }), [] )
+        // кешируем создание обьекта стжйта
 
-        let canselled = false
+        const [ dataState, setDataState] = useState( initState )
 
-        fetch( `https://swapi.dev/api/planets/${int}` )
-        .then( res => res.json() )
-        .then( res => { 
-            // !canselled && setPlanet( res.name )
-            setPlanet( res.name )
-            setDisBtn( v => !v )
-        } )
+        useEffect( () => {
+            setDataState( initState )
+            let canselled = false
 
-        // return () => canselled = true  
-    }, [ int ] )
+            request()
+            .then( (res) => { 
+                !canselled && setDataState( {
+                    data: res,
+                    loading: false,
+                    error: null,
+                } ) 
+            } )
+            .catch( err => !canselled && setDataState( {
+                data: null,
+                loading: false,
+                error: err,
+            } )) 
+
+            return () => { 
+                canselled = true 
+            }
+
+        }, [ request, initState ])
+        // хук зависит от функции
+
+        return dataState
+    }
+
+    const usePlanetInfo = (id) => {   
+        const request = useCallback( () => getPlanet( id ), [ id ]  )
+        //  каждый раз созаается новая функция 
+        return useRequest( request )
+    }
 
     const label = BtnLabel ? 'hide' : 'show'
+    const { data, loading, error } = usePlanetInfo( int )
 
-    if (BtnLabel) {
+
+    if (loading) {
         return (
             <div>
-                <button onClick={() => setBtnLabel(v => !v)} >{label}</button>
-                <button disabled = { disBtn } onClick={ () => setInt( v => v + 1 ) } > + </button>
-                <button disabled = { disBtn } onClick={ () => setInt( v => v > 1 ? v - 1 : 1 ) } > - </button>
-                <ComponentCount value = { int } />
-                <Notification />
-                <h1> { planet } </h1>
-            </div>
-        )
-    } else {
-        return (
-            <div>
-                <button onClick={() => setBtnLabel(v => !v)} >{label}</button>
+                <ComponentPlanet data={{ int, label, setBtnLabel, setInt }} />
+                <div>...Loading</div>
             </div>
         )
     }
+    if (error) { 
+        return (
+            <div>
+                <ComponentPlanet data = { { int, label, setBtnLabel, setInt } } />
+                <div>Error</div>
+            </div>
+        )
+    }
+    return (
+        <div>
+            <ComponentPlanet data = { { int, label, setBtnLabel, setInt } } />
+            <h1> {data ? data.name : null} </h1>
+        </div>
+    )
 }
 
+const ComponentPlanet = ( { data } ) => {
+    const { int, label, setBtnLabel, setInt } = data
+    return (
+        <>
+            <button onClick={() => setBtnLabel(v => !v)} >{label}</button>
+            <button onClick={() => setInt(v => v + 1)} > + </button>
+            <button onClick={() => setInt(v => v > 1 ? v - 1 : 1)} > - </button>
+            <ComponentCount value={int} />
+        </>
+    )
+}
 
 const ComponentCount = ( { value } ) => {
 
     useEffect( () => {
-        console.log('Mount')
-        return () => console.log('Unmount'); 
+        // console.log('Mount')
+        // return () => console.log('Unmount'); 
     }, [] )
 
     useEffect( () => {
-        console.log('UpdateComponent') 
+        // console.log('UpdateComponent') 
     })
 
     return (
@@ -67,7 +113,7 @@ const ComponentCount = ( { value } ) => {
     )
 }
 
-const Notification = () => {
+export const Notification = () => {
 
     const [ visible, setVisible ] = useState(true)
 
