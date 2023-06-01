@@ -1,6 +1,9 @@
 import React from "react";
 import { useEffect, useState, useCallback, useMemo } from "react";
 
+import { MyContext } from '../App' 
+
+import './useEffect.css'
 
 export const UseEffect = () => {
     let [BtnLabel, setBtnLabel] = useState(true)
@@ -62,12 +65,7 @@ export const UseEffect = () => {
 
 
     if (loading) {
-        return (
-            <div>
-                <ComponentPlanet data={{ int, label, setBtnLabel, setInt }} />
-                <div>...Loading</div>
-            </div>
-        )
+        return <div>...Loading</div> 
     }
     if (error) { 
         return (
@@ -77,41 +75,48 @@ export const UseEffect = () => {
             </div>
         )
     }
+
+    if (BtnLabel) {
+        return (
+            <div className="conteiner-elements-useEffect">
+                <div className="elements-useEffect-count">
+                    <ComponentPlanet data={{ int, label, setBtnLabel, setInt }} />
+                </div>
+                <div className="elements-useEffect-name">
+                    <h1> {data ? data.name : null} </h1>
+                    <UseContext />
+                </div>
+            </div>
+        )
+    } else { 
+        return ( 
+            <ComponentPlanet data={{ int, label, setBtnLabel, setInt }} />
+        )
+    }
+}
+
+const UseContext = () => {
     return (
-        <div>
-            <ComponentPlanet data = { { int, label, setBtnLabel, setInt } } />
-            <h1> {data ? data.name : null} </h1>
-        </div>
-    )
+        <MyContext.Consumer>
+            { value =>  ( <div>{ `Context - ${ value }`}</div> ) }
+        </MyContext.Consumer>
+    )    
 }
 
 const ComponentPlanet = ( { data } ) => {
     const { int, label, setBtnLabel, setInt } = data
     return (
-        <>
-            <button onClick={() => setBtnLabel(v => !v)} >{label}</button>
-            <button onClick={() => setInt(v => v + 1)} > + </button>
-            <button onClick={() => setInt(v => v > 1 ? v - 1 : 1)} > - </button>
-            <ComponentCount value={int} />
-        </>
+        <div className="containerBtn">
+            <div>
+                <button className="countBtn" onClick={() => setBtnLabel(v => !v)} >{label}</button>
+                <button className="countBtn" onClick={() => setInt(v => v + 1)} > + </button>
+                <button className="countBtn" onClick={() => setInt(v => v > 1 ? v - 1 : 1)} > - </button>
+            </div>
+            <div>{ int }</div>
+        </div>
     )
 }
 
-const ComponentCount = ( { value } ) => {
-
-    useEffect( () => {
-        // console.log('Mount')
-        // return () => console.log('Unmount'); 
-    }, [] )
-
-    useEffect( () => {
-        // console.log('UpdateComponent') 
-    })
-
-    return (
-        <h1> {value} </h1>
-    )
-}
 
 export const Notification = () => {
 
@@ -129,7 +134,7 @@ export const Notification = () => {
 
     if(visible) {
         return (
-            <div>
+            <div className="notificator">
                 Notificator
             </div>
         )

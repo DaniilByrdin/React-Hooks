@@ -1,0 +1,30 @@
+.conteiner-elements-useEffect {
+    color: black;
+    height: 45px;
+}
+.elements-useEffect-count {
+    display: flex;
+    height: 45px;
+}
+.containerBtn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 85%;
+}
+.elements-useEffect-name {
+    height: 200px;
+}
+.countBtn {
+    width: 55px;
+    height: 40px;
+}
+.count {
+    margin-left: 15px;
+}
+.notificator {
+    color: red;
+    font-weight: bold;
+    font-size: 26px;
+}
+
